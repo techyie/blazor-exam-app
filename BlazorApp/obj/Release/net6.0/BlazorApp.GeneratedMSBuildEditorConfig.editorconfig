@@ -1,0 +1,92 @@
+is_global = true
+build_property.TargetFramework = net6.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = BlazorApp
+build_property.RootNamespace = BlazorApp
+build_property.ProjectDir = E:\Learning\BlazorApp\
+build_property.RazorLangVersion = 6.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = E:\Learning\BlazorApp
+build_property._RazorSourceGeneratorDebug = 
+
+[E:/Learning/BlazorApp/App.razor]
+build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/Learning/BlazorApp/Components/Alert.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBbGVydC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/Learning/BlazorApp/Components/Paging.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdpbmcucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/Learning/BlazorApp/Components/TodoDeleteModalDialog.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xUb2RvRGVsZXRlTW9kYWxEaWFsb2cucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/Learning/BlazorApp/Components/TodoEditForm.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xUb2RvRWRpdEZvcm0ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/Learning/BlazorApp/Components/TodoForm.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xUb2RvRm9ybS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/Learning/BlazorApp/Components/TodoUpdateCompleteModalDialog.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xUb2RvVXBkYXRlQ29tcGxldGVNb2RhbERpYWxvZy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/Learning/BlazorApp/Components/TodoUpdateModalDialog.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xUb2RvVXBkYXRlTW9kYWxEaWFsb2cucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/Learning/BlazorApp/Pages/Counter.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ291bnRlci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/Learning/BlazorApp/Pages/FetchData.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRmV0Y2hEYXRhLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/Learning/BlazorApp/Pages/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/Learning/BlazorApp/Pages/Todo.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVG9kby5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/Learning/BlazorApp/Shared/SurveyPrompt.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFN1cnZleVByb21wdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/Learning/BlazorApp/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/Learning/BlazorApp/Shared/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE1haW5MYXlvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-3dsd3z3yec
+
+[E:/Learning/BlazorApp/Shared/NavMenu.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE5hdk1lbnUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-7cxxmz0cwl
+
+[E:/Learning/BlazorApp/Pages/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/Learning/BlazorApp/Pages/_Host.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX0hvc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/Learning/BlazorApp/Pages/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX0xheW91dC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 

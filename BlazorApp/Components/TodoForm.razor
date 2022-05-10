@@ -1,0 +1,60 @@
+﻿@using BlazorApp.Data
+@using BlazorApp.Common
+@using BlazorApp.Model
+
+@inject HttpClient Http;
+
+<div class="card">
+	<div class="card-header">
+		New Task
+	</div>
+	<div class="card-body">
+		<EditForm Model="@todoItem" OnValidSubmit="@HandleValidSubmit">
+			<DataAnnotationsValidator />
+			<ValidationSummary />
+			<div class="form-group">
+				<label for="titleInput">Title</label>
+				<InputText class="form-control" id="titleInput" @bind-Value="todoItem.Title" />
+			</div>
+			<div class="form-group" style="padding: 15px 0px 0px 0px">
+				<label for="descriptionInput">Description</label>
+				<InputText class="form-control" id="descriptionInput" @bind-Value="todoItem.Description" />
+			</div>
+			<div style="padding: 15px 0px 0px 0px">
+				<button type="submit" class="btn btn-primary" style="float: right">Create</button>
+			</div>
+		</EditForm>
+	</div>
+</div>
+
+@code {
+
+	private TodoItem todoItem = new TodoItem();
+	private TodoViewModel todoViewModel;
+
+	[Parameter]
+	public EventCallback OnSubmitCallback { get; set; }
+
+	public async Task HandleValidSubmit()
+	{
+		try
+		{
+			todoViewModel = new TodoViewModel();
+			todoViewModel.uuid = Guid.NewGuid().ToString();
+			todoViewModel.dateAdded = DateTime.UtcNow.ToLocalTime();
+			todoViewModel.dateUpdated = DateTime.UtcNow.ToLocalTime();
+			todoViewModel.title = todoItem.Title;
+			todoViewModel.description = todoItem.Description;
+			todoViewModel.status = "New";
+
+			await Http.PostAsJsonAsync<TodoViewModel>("https://6275ea8515458100a6a8e473.mockapi.io/api/Todolist", todoViewModel);
+			await OnSubmitCallback.InvokeAsync();
+
+			todoItem = new TodoItem();
+
+		} catch (Exception err)
+		{
+			throw err;
+		}
+	}
+}

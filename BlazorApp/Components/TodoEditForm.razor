@@ -1,0 +1,123 @@
+﻿@using BlazorApp.Data
+@using BlazorApp.Common
+@using BlazorApp.Model
+
+@inject HttpClient Http;
+
+<EditForm Model="@NewTodoItem" OnValidSubmit="@HandleValidSubmit">
+	<DataAnnotationsValidator />
+	<ValidationSummary />
+<div class="card order-md-first">
+	<div class="card-header">
+		Edit Todo
+		@if (@NewTodoItem.Status == "New")
+		{
+			<button type="button" class="btn btn-warning btn-sm rounded-pill float-end" @onclick="() =>UpdateStatus()">Mark as In Progress</button>
+		}
+		else if (@NewTodoItem.Status == "InProgress")
+		{
+			<button type="button" class="btn btn-success btn-sm rounded-pill float-end" @onclick="() =>UpdateStatus()">Mark as Completed</button>
+		}else if (@NewTodoItem.Status == "Completed")
+		{
+			<button type="button" class="btn btn-info btn-sm rounded-pill float-end" @onclick="() =>UpdateStatus()">Mark as Reopen</button>
+		}
+	</div>
+	<div class="card-body">
+
+			<div class="form-group">
+				<label for="titleInput">Title</label>
+				<InputText class="form-control" id="titleInput" @bind-Value="NewTodoItem.Title" />
+			</div>
+			<div class="form-group" style="padding: 15px 0px 0px 0px">
+				<label for="descriptionInput">Description</label>
+				<InputText class="form-control" id="descriptionInput" @bind-Value="NewTodoItem.Description" />
+			</div>
+			<div class="form-group" style="padding: 15px 0px 0px 0px">
+				<label for="statusInput">Status</label>
+				<InputText class="form-control"  id="statusInput" @bind-Value="NewTodoItem.Status" readonly/>
+			</div>
+			<div style="padding: 15px 0px 0px 0px">
+				<button type="button" class="btn" style="float: left" @onclick="@ModalClose">Cancel</button>
+				<button type="submit" class="btn btn-primary" style="float: right">Save</button>
+			</div>
+
+	</div>
+</div>
+
+</EditForm>
+
+
+
+
+@code {
+
+	private TodoViewModel todoViewModel;
+
+	[Parameter]
+	public EventCallback OnSubmitCallback { get; set; }
+
+	[Parameter]
+	public TodoItem NewTodoItem { get; set; }
+
+	public async Task HandleValidSubmit()
+	{
+		try
+		{
+			todoViewModel = new TodoViewModel();
+			todoViewModel.uuid = NewTodoItem.UUID;
+			todoViewModel.dateAdded = Convert.ToDateTime(NewTodoItem.DateAdded);
+			todoViewModel.dateUpdated = DateTime.UtcNow.ToLocalTime();
+			todoViewModel.title = NewTodoItem.Title;
+			todoViewModel.description = NewTodoItem.Description;
+			todoViewModel.status = NewTodoItem.Status;
+
+			await Http.PutAsJsonAsync<TodoViewModel>(Constants.BASEURL + $"/{NewTodoItem.ID}", todoViewModel);
+			await OnSubmitCallback.InvokeAsync();
+
+		} catch (Exception err)
+		{
+			throw err;
+		}
+	}
+
+	private async Task UpdateStatus()
+	{
+		try
+		{
+			todoViewModel = new TodoViewModel();
+			todoViewModel.uuid = NewTodoItem.UUID;
+			todoViewModel.dateAdded = Convert.ToDateTime(NewTodoItem.DateAdded);
+			todoViewModel.dateUpdated = DateTime.UtcNow.ToLocalTime();
+			todoViewModel.title = NewTodoItem.Title;
+			todoViewModel.description = NewTodoItem.Description;
+			if (NewTodoItem.Status == "New")
+			{
+				todoViewModel.status = "InProgress";
+			}
+			else if (NewTodoItem.Status == "InProgress")
+			{
+				todoViewModel.status = "Completed";
+			}else
+			{
+				todoViewModel.status = "InProgress";
+			}
+
+
+			await Http.PutAsJsonAsync<TodoViewModel>(Constants.BASEURL + $"/{NewTodoItem.ID}", todoViewModel);
+			await OnSubmitCallback.InvokeAsync();
+
+		} catch (Exception err)
+		{
+			throw err;
+		}
+	}
+
+	[Parameter]
+    public EventCallback<bool> TodoEditFormOnClose { get; set; }
+
+    private Task ModalClose()
+    {
+        return TodoEditFormOnClose.InvokeAsync(true);
+    }
+
+}

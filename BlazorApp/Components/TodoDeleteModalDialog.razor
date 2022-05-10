@@ -1,0 +1,65 @@
+﻿<div class="modal fade show" id="todoDeleteModalDialog" style="display:block; background-color: rgba(10,10,10,.8);" aria-modal="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">@TodoDeleteModalDialogHeader</h4>
+                <button type="button" class="close" @onclick="@ModalCancel">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>@TodoDeleteModalDialogTitle</p>
+            </div>
+            <div class="modal-footer">
+                @switch (todoDeleteModalDialogType)
+                {
+                    case TodoDeleteModalDialogType.Ok:
+                        <button type="button" class="btn btn-primary" @onclick=@ModalOk>OK</button>
+                        break;
+                    case TodoDeleteModalDialogType.OkCancel:
+                        <button type="button" class="btn" @onclick="@ModalCancel">Cancel</button>
+                        <button type="button" class="btn btn-primary" @onclick=@ModalOk>OK</button>
+                        break;
+                    case TodoDeleteModalDialogType.DeleteCancel:
+                        <button type="button" class="btn" @onclick="@ModalCancel">Cancel</button>
+                        <button type="button" class="btn btn-danger" @onclick=@ModalOk>Delete</button>
+                        break;
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public string TodoDeleteModalDialogHeader { get; set; }
+
+    [Parameter]
+    public string TodoDeleteModalDialogTitle { get; set; }
+
+    [Parameter]
+    public int TodoDeleteModalDialogID { get; set; }
+
+    [Parameter]
+    public TodoDeleteModalDialogType todoDeleteModalDialogType { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> TodoDeleteModalDialogOnClose { get; set; }
+
+    private Task ModalCancel()
+    {
+        return TodoDeleteModalDialogOnClose.InvokeAsync(false);
+    }
+
+    private Task ModalOk()
+    {
+        return TodoDeleteModalDialogOnClose.InvokeAsync(true);
+    }
+
+    public enum TodoDeleteModalDialogType
+    {
+        Ok,
+        OkCancel,
+        DeleteCancel
+    }
+
+}

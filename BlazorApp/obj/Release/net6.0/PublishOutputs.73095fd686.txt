@@ -1,0 +1,15 @@
+E:\Learning\BlazorApp\obj\Release\net6.0\PubTmp\Out\BlazorApp.exe
+E:\Learning\BlazorApp\obj\Release\net6.0\PubTmp\Out\appsettings.Development.json
+E:\Learning\BlazorApp\obj\Release\net6.0\PubTmp\Out\appsettings.json
+E:\Learning\BlazorApp\obj\Release\net6.0\PubTmp\Out\BlazorApp.dll
+E:\Learning\BlazorApp\obj\Release\net6.0\PubTmp\Out\BlazorApp.deps.json
+E:\Learning\BlazorApp\obj\Release\net6.0\PubTmp\Out\BlazorApp.runtimeconfig.json
+E:\Learning\BlazorApp\obj\Release\net6.0\PubTmp\Out\BlazorApp.pdb
+E:\Learning\BlazorApp\obj\Release\net6.0\PubTmp\Out\Microsoft.EntityFrameworkCore.dll
+E:\Learning\BlazorApp\obj\Release\net6.0\PubTmp\Out\Microsoft.EntityFrameworkCore.Abstractions.dll
+E:\Learning\BlazorApp\obj\Release\net6.0\PubTmp\Out\Newtonsoft.Json.dll
+E:\Learning\BlazorApp\obj\Release\net6.0\PubTmp\Out\PSC.Blazor.Components.DataTable.dll
+E:\Learning\BlazorApp\obj\Release\net6.0\PubTmp\Out\PSC.Extensions.dll
+E:\Learning\BlazorApp\obj\Release\net6.0\PubTmp\Out\System.Linq.Dynamic.Core.dll
+E:\Learning\BlazorApp\obj\Release\net6.0\PubTmp\Out\BlazorApp.Common.dll
+E:\Learning\BlazorApp\obj\Release\net6.0\PubTmp\Out\BlazorApp.Common.pdb

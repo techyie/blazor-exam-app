@@ -1,0 +1,12 @@
+E:\Learning\BlazorApp.Common\bin\Release\net6.0\BlazorApp.Common.deps.json
+E:\Learning\BlazorApp.Common\bin\Release\net6.0\BlazorApp.Common.dll
+E:\Learning\BlazorApp.Common\bin\Release\net6.0\BlazorApp.Common.pdb
+E:\Learning\BlazorApp.Common\obj\Release\net6.0\BlazorApp.Common.csproj.AssemblyReference.cache
+E:\Learning\BlazorApp.Common\obj\Release\net6.0\BlazorApp.Common.GeneratedMSBuildEditorConfig.editorconfig
+E:\Learning\BlazorApp.Common\obj\Release\net6.0\BlazorApp.Common.AssemblyInfoInputs.cache
+E:\Learning\BlazorApp.Common\obj\Release\net6.0\BlazorApp.Common.AssemblyInfo.cs
+E:\Learning\BlazorApp.Common\obj\Release\net6.0\BlazorApp.Common.csproj.CoreCompileInputs.cache
+E:\Learning\BlazorApp.Common\obj\Release\net6.0\BlazorApp.Common.dll
+E:\Learning\BlazorApp.Common\obj\Release\net6.0\refint\BlazorApp.Common.dll
+E:\Learning\BlazorApp.Common\obj\Release\net6.0\BlazorApp.Common.pdb
+E:\Learning\BlazorApp.Common\obj\Release\net6.0\ref\BlazorApp.Common.dll

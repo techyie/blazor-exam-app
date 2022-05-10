@@ -1,0 +1,26 @@
+﻿<div class="toast @AlerCssClass" role="alert">
+   <div class="toast-header">
+        <strong class="mr-auto">Update</strong>
+        <small>@AlertSub</small>
+  </div>
+  <div class="toast-body">
+    Changes from @PreviousStatus to @NewStatus.
+  </div>
+</div>
+
+@code {
+    [Parameter]
+    public string AlerCssClass { get; set; }
+
+    [Parameter]
+    public string AlertTitle { get; set; }
+
+    [Parameter]
+    public string AlertSub { get; set; }
+
+    [Parameter]
+    public string PreviousStatus { get; set; }
+
+    [Parameter]
+    public string NewStatus { get; set; }
+}

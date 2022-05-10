@@ -1,0 +1,43 @@
+﻿@page "/counter"
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+  @if (@resultValue == 0) {
+        <p role="status">Current count: @resultValue </p>
+    }
+    else
+    {
+        <p role="status">Current count: @initValue, @resultValue </p> 
+    }
+
+<button class="btn btn-primary" @onclick="Increase">Increase</button>
+
+<button class="btn btn-primary" @onclick="Decrease">Decrease</button>
+
+@code {
+    private int initValue = 0, newValue = 1, resultValue = 0;
+
+    private void Increase()
+    {
+        if (resultValue >= 0)
+        {
+            resultValue = initValue + newValue;
+            initValue = newValue;
+            newValue = resultValue;
+        }
+    }
+
+    private void Decrease()
+    {
+        if (newValue >= 1)
+        {
+            resultValue = newValue - initValue;
+            newValue = initValue;
+            initValue = resultValue;
+            resultValue = newValue;
+        }
+    }
+
+}

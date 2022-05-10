@@ -1,0 +1,455 @@
+﻿@page "/todo"
+
+@using BlazorApp.Components
+@using BlazorApp.Shared
+@using BlazorApp.Common
+@using BlazorApp.Model
+@using BlazorApp.Data
+@using System.Globalization
+@using Microsoft.AspNetCore.Mvc.Rendering;
+
+@inject HttpClient Http;
+
+<PageTitle>Todo</PageTitle>
+
+<div class=row>
+	<div class="col-lg-8">
+		<div class="card">
+			<div class="card-header">
+				Tasks
+			</div>
+			<div class="card-body">
+
+				<div class="form-group float-start" style="padding-top: 15px; padding-bottom: 15px">
+					Rows per page:
+					<select class="custom-select" id="pageSizeSelect" @onchange="@(e => OnRowsPerPageChange(Convert.ToInt32(e.Value)))">
+						<option value="5" selected>5</option>
+						<option value="10">10</option>
+						<option value="20">20</option>
+						<option value="30">30</option>
+						<option value="40">40</option>
+						<option value="50">50</option>
+					</select>
+				</div>
+
+				<div class="form-group float-end" style="padding-top: 15px; padding-bottom: 15px">
+					<input class="form-control" type="text" placeholder="Search"
+						   @oninput="@(e => OnFilterChange(e.Value.ToString()))"
+					>
+				</div>
+
+				<table class="table table-responsive">
+					<thead>
+						<tr>
+							@*<th>ID</th>*@
+							<th @onclick="@(() => Sort("Title"))" class="cursor">Title&nbsp;<span class="oi @((MarkupString)TitleArrow)"></span></th>
+							<th @onclick="@(() => Sort("Description"))" class="cursor">Description&nbsp;<span class="oi @((MarkupString)DescriptionArrow)"></span></th>
+							<th @onclick="@(() => Sort("Status"))" class="cursor">Status&nbsp;<span class="oi @((MarkupString)StatusArrow)"></span></th>
+							<th @onclick="@(() => Sort("DateAdded"))" class="cursor">Date Added&nbsp;<span class="oi @((MarkupString)DateAddedArrow)"></span></th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						@if (todoItems == null)
+						{
+							<tr><td>Loading...</td></tr>
+						}
+						else
+						{
+							@if(todoItems.Count == 0)
+							{
+								<tr><td>Loading...</td></tr>
+							}
+							else
+							{
+								@foreach(var todoItem in todoItems)
+								{
+									<tr>
+										<td class="tdcolor" style="@(todoItem.status == "New" ? "font-weight: bold" : "")">@todoItem.title</td>
+										<td class="tdcolor">@todoItem.description</td>
+										<td class="tdcolor">
+											@if (@todoItem.status == "New")
+												{
+													<span class="status border border-success rounded-pill green">New</span>
+												}
+												else if (@todoItem.status == "InProgress")
+												{
+													<span class="status border border-warning rounded-pill warning">In Progress</span>
+												}
+												else if (@todoItem.status == "Completed")
+												{
+													<span class="status border border-white rounded-pill">Completed</span>
+												}
+											</td>
+										<td class="tdcolor">@todoItem.dateAdded</td>
+										<td>
+											<button type="button" title="Delete" class="btn btn-light btn-sm" @onclick="() => OpenDeleteDialog(todoItem)"><span class="oi oi-trash red"></span></button>
+											<button type="button" title="Update" class="btn btn-light btn-sm" @onclick="() => OpenEditTodoForm(todoItem)"><span class="oi oi-pencil blue"></span></button>
+										</td>
+									</tr>
+								}
+							}
+
+						}
+					</tbody>
+				</table>
+				<div class="float-start">
+					Total Records: @temporaryTodoItems.Count
+				</div>
+				 <ul class="pagination float-end">
+					<button class="btn" @onclick="@(e => NavigateTo("first"))">@("<<")</button>
+					<button class="btn btn-light" @onclick="@(e => NavigateTo("prev"))">Prev</button>
+					@for(int i = 1; i <= TotalPages; i++)
+					{
+						var pageNumber = i;
+
+						<button class="btn @(CurrentPage == pageNumber ? "btn-dark" : "")" @onclick="@(e => UpdateList(pageNumber))">@i</button>
+					}
+					<button class="btn btn-light" @onclick="@(e => NavigateTo("next"))">Next</button>
+					<button class="btn btn-light" @onclick="@(e => NavigateTo("last"))">@(">>")</button>
+				  </ul>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-4">
+		@if(TodoEditFormOpen)
+		{
+			<TodoEditForm TodoEditFormOnClose="@OnEditTodoFormClose" NewTodoItem=@newTodoItem OnSubmitCallback=@Refresh></TodoEditForm>
+		} else
+		{
+			<TodoForm OnSubmitCallback="@Refresh"></TodoForm>
+		}
+		
+	</div>
+</div>
+<div>&nbsp;</div>
+
+@if(TodoDeleteModalDialogOpen)
+{
+	<TodoDeleteModalDialog 
+		TodoDeleteModalDialogHeader="Are you sure?" 
+		TodoDeleteModalDialogTitle="Do you want to delete this entry?" 
+		TodoDeleteModalDialogID=@todoItemID
+		TodoDeleteModalDialogOnClose="@OnDeleteDialogClose"
+		todoDeleteModalDialogType="TodoDeleteModalDialog.TodoDeleteModalDialogType.DeleteCancel"
+	></TodoDeleteModalDialog>
+}
+
+<style>
+.Completed {
+        
+		color: darkgreen;
+    }
+.Active {
+        
+		color: gray;
+    }
+.tdcolor {
+	color: black;
+}
+
+.red{
+	color: #dc3545;
+}
+
+.blue{
+	color: #17a2b8;
+}
+
+.green{
+	color: #28a745;
+}
+
+.warning{
+	color: #ffc107;
+}
+
+.status {
+	padding: 5px 10px 5px 10px;
+}
+
+.cursor{
+	cursor: pointer;
+}
+</style>
+
+
+@code {
+
+	private List<TodoViewModel> todoItems;
+	private List<TodoViewModel> temporaryTodoItems = new List<TodoViewModel>();
+
+	private int todoItemID;
+	private TodoItem newTodoItem;
+
+	public bool TodoDeleteModalDialogOpen { get; set; }
+	public bool TodoEditFormOpen { get; set; }
+	private bool ReloadList { get; set; }
+
+	public string Filter { get; set; }
+	private string SortColumn = "", SortValue = "asc", TitleArrow, DescriptionArrow, StatusArrow, DateAddedArrow, DateUpdatedArrow;
+	private int Page;
+	private int TotalPages = 0;
+	private int CurrentPage = 1;
+	private int PageSize = 5;
+
+
+	PagingInfo pagingInfo = new PagingInfo();
+
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			await LoadData();		
+		}
+		catch(Exception err)
+		{
+			todoItems = new List<TodoViewModel>();
+		}
+	}
+
+	protected override void OnAfterRender(bool firstRender)
+	{
+		if(!firstRender && ReloadList)
+		{
+			UpdateList();
+			ReloadList = false;
+
+			StateHasChanged();
+		}
+
+		base.OnAfterRender(firstRender);
+	}
+
+	private async Task LoadData()
+	{
+		temporaryTodoItems = await Http.GetFromJsonAsync<List<TodoViewModel>>(Constants.BASEURL);
+		UpdateList(1);
+		StateHasChanged();
+	}
+
+	public async void Refresh()
+	{
+		try
+		{
+			TodoEditFormOpen = false;
+			await LoadData();
+		}
+		catch(Exception err)
+		{
+			todoItems = new List<TodoViewModel>();
+		}
+	}
+
+	private async Task OnDeleteDialogClose(bool accepted)
+	{
+		if(accepted)
+		{
+			await Http.DeleteAsync(Constants.BASEURL + $"/{todoItemID}");
+			await LoadData();
+			todoItemID = 0;
+		}
+
+		TodoDeleteModalDialogOpen = false;
+		StateHasChanged();
+	}
+
+	private void OpenDeleteDialog(TodoViewModel todoViewModel)
+	{
+		TodoDeleteModalDialogOpen = true;
+		todoItemID = todoViewModel.id;
+		StateHasChanged();
+	}
+
+	private void OpenEditTodoForm(TodoViewModel todoViewModel)
+	{
+		newTodoItem = new TodoItem();
+		newTodoItem.ID = todoViewModel.id;
+		newTodoItem.UUID = todoViewModel.uuid;
+		newTodoItem.Title = todoViewModel.title;
+		newTodoItem.Description = todoViewModel.description;
+		newTodoItem.Status = todoViewModel.status;
+		newTodoItem.DateAdded = Convert.ToString(todoViewModel.dateAdded);
+		TodoEditFormOpen = true;
+		StateHasChanged();
+	}
+
+	private async Task OnEditTodoFormClose(bool isClosed)
+	{
+		if(isClosed)
+		{
+			TodoEditFormOpen = false;
+			StateHasChanged();
+		}
+	}
+
+	private async Task OnClickUpdateStatus(TodoViewModel todoViewModel)
+	{
+		todoViewModel.dateUpdated = DateTime.UtcNow.ToLocalTime();
+		await Http.PutAsJsonAsync(Constants.BASEURL + $"/{todoViewModel.id}", todoViewModel);
+		await LoadData();
+
+	}
+
+	public void Sort(string tableColumn)
+	{
+		if (tableColumn == SortColumn)
+			SortValue = SortValue == "asc" ? "desc" : "asc";
+		else
+		{
+			SortColumn = tableColumn;
+			SortValue = "asc";
+		}
+
+		TitleArrow = DescriptionArrow = StatusArrow = DateAddedArrow = DateUpdatedArrow = "";
+
+		Page = 1;
+		SortRecord(SortColumn, SortValue);
+	}
+
+	private async Task SortRecord(string sortColumn, string sortValue)
+	{
+		var query = todoItems;
+		TitleArrow = DescriptionArrow = StatusArrow = DateAddedArrow = DateUpdatedArrow = "";
+
+		if (sortValue == "asc")
+		{
+			switch (sortColumn)
+			{
+				case "Title":
+					await OnSort("title", "asc");
+					TitleArrow = "oi-sort-ascending";
+					break;
+				case "Description":
+					await OnSort("description", "asc");
+					DescriptionArrow = "oi-sort-ascending";
+					break;
+				case "Status":
+					await OnSort("status", "asc");
+					StatusArrow = "oi-sort-ascending";
+					break;
+				case "DateAdded":
+					await OnSort("dateAdded", "asc");
+					DateAddedArrow = "oi-sort-ascending";
+					break;
+				case "DateUpdated":
+					await OnSort("dateUpdated", "asc");
+					DateUpdatedArrow = "oi-sort-ascending";
+					break;
+				default:
+					await OnSort("dateAdded", "asc");
+					DateAddedArrow = "oi-sort-descending";
+					break;
+			}
+		}
+		else
+		{
+			switch (sortColumn)
+			{
+				case "Title":
+					await OnSort("title", "desc");
+					TitleArrow = "oi-sort-descending";
+					break;
+				case "Description":
+					await OnSort("description", "desc");
+					DescriptionArrow = "oi-sort-descending";
+					break;
+				case "Status":
+					await OnSort("status", "desc");
+					StatusArrow = "oi-sort-descending";
+					break;
+				case "DateAdded":
+					await OnSort("dateAdded", "desc");
+					DateAddedArrow = "oi-sort-descending";
+					break;
+				case "DateUpdated":
+					await OnSort("dateUpdated", "desc");
+					DateUpdatedArrow = "oi-sort-descending";
+					break;
+				default:
+					await OnSort("dateAdded", "desc");
+					DateAddedArrow = "oi-sort-descending";
+					break;
+			}
+		}
+
+		StateHasChanged();
+	}
+
+	private void UpdateList(int pageNumber = 0) {
+
+		TotalPages = (int)Math.Ceiling(temporaryTodoItems.Count() / (decimal)PageSize);
+
+		var skip = PageSize * (Convert.ToInt32(pageNumber) - 1);
+		todoItems = temporaryTodoItems.OrderByDescending(c => c.dateAdded).OrderByDescending(q => q.status).Skip(skip).Take(PageSize).ToList();
+		CurrentPage = pageNumber;
+	}
+
+	private void UpdateListWithoutCustomSorting(int pageNumber = 0)
+	{
+		TotalPages = (int)Math.Ceiling(temporaryTodoItems.Count() / (decimal)PageSize);
+		var skip = PageSize * (Convert.ToInt32(pageNumber) - 1);
+		todoItems = temporaryTodoItems.Skip(skip).Take(PageSize).ToList();
+		CurrentPage = pageNumber;
+	}
+
+	private void NavigateTo(string direction)
+	{
+		if (direction == "prev" && CurrentPage != 0)
+			CurrentPage -= 1;
+		if (direction == "next" && CurrentPage < TotalPages)
+			CurrentPage += 1;
+		if (direction == "first")
+			CurrentPage = 1;
+		if (direction == "last")
+			CurrentPage = TotalPages;
+
+		UpdateList(CurrentPage);
+	}
+
+	private void OnRowsPerPageChange(int pageSize)
+	{
+		PageSize = pageSize;
+		UpdateList(1);
+		StateHasChanged();
+	}
+
+	private async Task OnFilterChange(string keyword)
+	{
+		try {
+			temporaryTodoItems = await Http.GetFromJsonAsync<List<TodoViewModel>>("https://6275ea8515458100a6a8e473.mockapi.io/api/Todolist?search=" + (keyword == null || keyword == "" ? "" : keyword));
+
+			if (temporaryTodoItems == null)
+				temporaryTodoItems = new List<TodoViewModel>();
+
+			UpdateList(1);
+			StateHasChanged();
+
+		} 
+		catch (Exception err)
+		{
+			temporaryTodoItems = new List<TodoViewModel>();
+			todoItems = null;
+			StateHasChanged();
+		}
+	}
+
+	private async Task OnSort(string column, string sorttype)
+	{
+		try {
+			temporaryTodoItems = await Http.GetFromJsonAsync<List<TodoViewModel>>("https://6275ea8515458100a6a8e473.mockapi.io/api/Todolist?sortBy=" + column + "&order=" + sorttype);
+
+			if (temporaryTodoItems == null)
+				temporaryTodoItems = new List<TodoViewModel>();
+
+			UpdateListWithoutCustomSorting(1);
+			StateHasChanged();
+		}
+		catch (Exception err)
+		{
+			temporaryTodoItems = new List<TodoViewModel>();
+			todoItems = null;
+			StateHasChanged();
+		}
+	}
+}
